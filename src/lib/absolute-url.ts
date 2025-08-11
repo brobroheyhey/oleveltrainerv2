@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 
 export function getBaseUrl(): string {
-  const envUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  const envUrl = process.env['NEXT_PUBLIC_SITE_URL'];
   if (envUrl && /^https?:\/\//i.test(envUrl)) return envUrl.replace(/\/$/, '');
   const hdrs = headers();
   const host = hdrs.get('x-forwarded-host') ?? hdrs.get('host');

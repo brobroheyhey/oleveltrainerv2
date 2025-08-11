@@ -1,12 +1,12 @@
 import { createServerClient as createServerClientSSO } from '@supabase/ssr';
-import { cookies, headers } from 'next/headers';
+import { cookies } from 'next/headers';
 
 export function createServerClient() {
   const cookieStore = cookies();
   const supabaseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
+    process.env['NEXT_PUBLIC_SUPABASE_URL'] || process.env['SUPABASE_URL'] || '';
   const supabaseKey =
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
+    process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] || process.env['SUPABASE_ANON_KEY'] || '';
   if (!supabaseUrl || !supabaseKey) {
     throw new Error(
       'Supabase env vars missing. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (or SUPABASE_URL/SUPABASE_ANON_KEY).',
@@ -25,12 +25,6 @@ export function createServerClient() {
         },
         remove(name: string, options: any) {
           cookieStore.set(name, '', { ...options, maxAge: 0 });
-        },
-      },
-      headers: {
-        get(name: string) {
-          // pass-forward for RSC context
-          return headers().get(name) ?? undefined;
         },
       },
     },
