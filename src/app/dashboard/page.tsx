@@ -1,12 +1,11 @@
 import Link from 'next/link';
-import { headers } from 'next/headers';
+import { getBaseUrl } from '@/lib/absolute-url';
+
+export const dynamic = 'force-dynamic';
 
 export default async function DashboardPage() {
   // SSR fetch with cookies
-  const hdrs = headers();
-  const host = hdrs.get('x-forwarded-host') ?? hdrs.get('host');
-  const proto = hdrs.get('x-forwarded-proto') ?? 'http';
-  const base = host ? `${proto}://${host}` : 'http://localhost:3000';
+  const base = getBaseUrl();
   const res = await fetch(`${base}/api/progress`, { cache: 'no-store' });
   const progress = res.ok ? await res.json() : null;
   return (

@@ -1,12 +1,11 @@
 import Link from 'next/link';
-import { headers } from 'next/headers';
+import { getBaseUrl } from '@/lib/absolute-url';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 
+export const dynamic = 'force-dynamic';
+
 export default async function DecksPage() {
-  const hdrs = headers();
-  const host = hdrs.get('x-forwarded-host') ?? hdrs.get('host');
-  const proto = hdrs.get('x-forwarded-proto') ?? 'http';
-  const base = host ? `${proto}://${host}` : 'http://localhost:3000';
+  const base = getBaseUrl();
   const res = await fetch(`${base}/api/decks`, { cache: 'no-store' });
   const { decks, dueTodayByDeck } = res.ok ? await res.json() : { decks: [], dueTodayByDeck: {} };
   return (
