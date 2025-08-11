@@ -1,3 +1,4 @@
+/* eslint-env jest */
 import { applySm2 } from './sm2';
 
 describe('SM-2 algorithm', () => {

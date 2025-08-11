@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
@@ -32,22 +32,25 @@ export default function StudyPage({ params }: { params: { id: string } }) {
 
   const current = useMemo(() => cards[index], [cards, index]);
 
-  const onGrade = async (rating: 'again' | 'hard' | 'medium' | 'easy') => {
-    if (!current) return;
-    setRevealed(false);
-    await fetch('/api/review', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cardId: current.id, grade: rating }),
-    });
-    setCompletedToday((c) => c + 1);
-    const nextIndex = index + 1;
-    if (nextIndex >= cards.length) {
-      router.push('/dashboard');
-    } else {
-      setIndex(nextIndex);
-    }
-  };
+  const onGrade = useCallback(
+    async (rating: 'again' | 'hard' | 'medium' | 'easy') => {
+      if (!current) return;
+      setRevealed(false);
+      await fetch('/api/review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cardId: current.id, grade: rating }),
+      });
+      setCompletedToday((c) => c + 1);
+      const nextIndex = index + 1;
+      if (nextIndex >= cards.length) {
+        router.push('/dashboard');
+      } else {
+        setIndex(nextIndex);
+      }
+    },
+    [current, index, cards.length, router],
+  );
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -64,7 +67,7 @@ export default function StudyPage({ params }: { params: { id: string } }) {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [revealed, current]);
+  }, [revealed, current, onGrade]);
 
   if (!current) {
     return <div>No due cards right now. 🎉</div>;
